@@ -26,7 +26,7 @@ class TreeNode:
         self.max_depth = max_depth
         self.min_rows_to_split = min_rows_to_split
         self.random_features_on_split = random_features_on_split
-        print("Deep %d" % deep)
+        # print("Deep %d" % deep)
 
     def mode(self, x: np.array) -> int:
         """
@@ -139,7 +139,7 @@ class TreeNode:
             for ind in range(n_rows - 1):
                 splits.append((self.X[ind, feature] + self.X[ind + 1, feature]) / 2)
             # Calculate partitions on this feature
-            for split in splits:
+            for split in np.unique(splits):
                 (
                     feature,
                     impurity_split,
