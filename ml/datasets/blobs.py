@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.datasets import make_blobs, make_regression
 
 
-class blobs:
+class Blobs:
     def generate(
         self,
         n_samples: int,

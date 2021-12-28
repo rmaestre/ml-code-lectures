@@ -1,12 +1,12 @@
 import numpy as np
 
-import ml.datasets.blobs as blobs
+from ml.datasets.blobs import Blobs
 from ml.models.random_forest import RandomForest
 from ml.metrics.classification import ClassificationMetrics
 
 
 def get_data():
-    dataset = blobs()
+    dataset = Blobs()
     X, y = dataset.generate(
         n_samples=100, n_centers=2, random_state=1234, cluster_std=[4, 4]
     )

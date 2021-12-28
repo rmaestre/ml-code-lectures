@@ -1,11 +1,12 @@
 import numpy as np
 
-import ml.datasets.blobs as blobs
+from ml.datasets.blobs import Blobs
 from ml.models.decision_tree import DecisionTree
 from ml.metrics.classification import ClassificationMetrics
 
+
 def get_data():
-    dataset = blobs()
+    dataset = Blobs()
     X, y = dataset.generate(
         n_samples=100, n_centers=2, random_state=1234, cluster_std=[4, 4]
     )
@@ -31,6 +32,7 @@ def test_init():
     cond1 = dec_tree.root.left.left.split_point["class_left"]
     cond2 = dec_tree.root.left.left.left
     assert cond1 == 0 and cond2 is None
+
 
 def test_depth_hyperparameter():
     X, y = get_data()

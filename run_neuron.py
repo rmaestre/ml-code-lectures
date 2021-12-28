@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 
-import ml.datasets.blobs as blobs
+from ml.datasets.blobs import Blobs
 from ml.models.neuron import Neuron
 
 
 # Generate synthetic dataset
-dataset = blobs()
+dataset = Blobs()
 X, y = dataset.generate(
     n_samples=100, n_centers=2, random_state=1234, cluster_std=[3.5, 3.5]
 )

@@ -4,7 +4,6 @@ from sklearn.datasets import make_moons
 import numpy as np
 from nnfs.datasets import spiral_data
 
-import ml.datasets.blobs as blobs
 from ml.models.mlp import (
     Layer_Dense,
     Activation_ReLU,

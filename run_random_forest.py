@@ -2,14 +2,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pprint
 
-import ml.datasets.blobs as blobs
+from ml.datasets.blobs import Blobs
 from ml.models.random_forest import RandomForest
 from ml.metrics.classification import ClassificationMetrics
 from ml.metrics.regression import RegressionMetrics
 
 
 is_classification = True
-dataset = blobs()
+dataset = Blobs()
 
 if is_classification:
     # Generate synthetic dataset
@@ -42,6 +42,7 @@ if is_classification:
     pprint.pprint(importances)
     # Plot bars
     plt.bar(importances.keys(), importances.values())
+    plt.show()
     a = 1 + 1
 
 else:

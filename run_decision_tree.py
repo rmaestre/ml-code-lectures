@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 
-import ml.datasets.blobs as blobs
+from ml.datasets.blobs import Blobs
 from ml.models.decision_tree import DecisionTree
 from ml.metrics.classification import ClassificationMetrics
 
 is_classification = True
-dataset = blobs()
+dataset = Blobs()
 
 if is_classification:
     # Generate synthetic dataset
