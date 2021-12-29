@@ -1,4 +1,5 @@
 from typing import Tuple, Dict
+from typing import Tuple, Dict
 import numpy as np
 
 from ml import Model
@@ -49,24 +50,23 @@ class RandomForest(Model):
             # Calculate batch
             X_batch = X[batch_index]
             y_batch = y[batch_index]
+            # Set max features number
+            max_features = max(1, int(np.sqrt(X.shape[1]))) + 1
+            random_fetures_selected = np.random.randint(1, max_features + 1)
             # Select random features
-            random_features = np.random.randint(X.shape[1]) + 1
             features_index = np.random.choice(
-                X.shape[1], random_features, replace=False
+                X.shape[1], random_fetures_selected, replace=False
             )
             # Select a random depth
-            random_depth = np.random.randint(self.max_depth) + 1
-            random_depth = np.max([2, random_depth])
+            # random_depth = np.random.randint(self.max_depth) + 1
+            # random_depth = np.max([2, random_depth])
+            random_depth = self.max_depth
             # Fit Deccision Tree
             print(
-                "Training %s tree in the forest with %s features and %s max depth"
-                % (tree, random_features, random_depth)
+                "Training %s tree in the forest with random features=%s and max_depth=%s"
+                % (tree, features_index, random_depth)
             )
-            self.forest.append(
-                DecisionTree(
-                    self.is_classification, random_depth, random_features_on_split=True
-                )
-            )
+            self.forest.append(DecisionTree(self.is_classification, random_depth))
             self.forest[-1].fit(X_batch[:, features_index], y_batch)
 
     def predict(self, X: np.array) -> np.array:

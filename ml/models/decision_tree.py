@@ -124,11 +124,6 @@ class TreeNode:
             "split": None,
         }
         features_list = range(n_features)
-        if self.random_features_on_split:
-            features_list = np.random.choice(
-                features_list, np.random.randint(0, n_features) + 1, replace=False
-            )
-
         for feature in features_list:
             # Sort by feature
             sorted_index = self.X[:, feature].argsort()
@@ -161,10 +156,11 @@ class TreeNode:
         # Recursive calls
         # On right
         mask_right = self.X[:, best_split["feature"]] >= best_split["split"]
+
         if (
             best_split["impurity_right"] > 0
             and self.deep <= self.max_depth
-            and len(self.X[mask_right]) > self.min_rows_to_split
+            and len(np.unique(self.X[mask_right], axis=0)) > self.min_rows_to_split
         ):
             self.right = TreeNode(
                 self.X[mask_right],
@@ -175,13 +171,16 @@ class TreeNode:
             )
             self.right.split()
         else:
-            self.split_point["class_rigth"] = self.y[mask_right][0]
+            if self.is_classification:
+                self.split_point["class_rigth"] = self.mode(self.y[mask_right])
+            else:
+                self.split_point["class_rigth"] = np.mean(self.y[mask_right])
         # On left
         mask_left = self.X[:, best_split["feature"]] < best_split["split"]
         if (
             best_split["impurity_left"] > 0
             and self.deep <= self.max_depth
-            and len(self.X[mask_left]) > self.min_rows_to_split
+            and len(np.unique(self.X[mask_left], axis=0)) > self.min_rows_to_split
         ):
             self.left = TreeNode(
                 self.X[mask_left],
@@ -192,10 +191,10 @@ class TreeNode:
             )
             self.left.split()
         else:
-            try:
-                self.split_point["class_left"] = self.y[mask_left][0]
-            except:
-                a = 1 + 1
+            if self.is_classification:
+                self.split_point["class_left"] = self.mode(self.y[mask_left])
+            else:
+                self.split_point["class_rigth"] = np.mean(self.y[mask_left])
 
 
 class DecisionTree(Model):
@@ -208,12 +207,10 @@ class DecisionTree(Model):
         is_classification: bool,
         max_depth: int = 20,
         random_state: int = 12,
-        random_features_on_split=False,
     ) -> None:
         self.random_state = random_state
         self.is_classification = is_classification
         self.max_depth = max_depth
-        self.random_features_on_split = random_features_on_split
 
     def fit(self, X: np.array, y: np.array):
         """
@@ -226,7 +223,6 @@ class DecisionTree(Model):
             deep=0,
             is_classification=self.is_classification,
             max_depth=self.max_depth,
-            random_features_on_split=self.random_features_on_split,
         )
         self.root.split()
 
