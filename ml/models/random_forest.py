@@ -141,6 +141,6 @@ class RandomForest(Model):
                         metric = RegressionMetrics(y, y_hats_perm)
                         error_perm = metric.get_mse()
                     errors_permuted_features[feature] += error_perm
-                errors_permuted_features[feature] /= 5
+                errors_permuted_features[feature] /= permutation_rounds
                 errors_permuted_features[feature] -= error
             return errors_permuted_features
