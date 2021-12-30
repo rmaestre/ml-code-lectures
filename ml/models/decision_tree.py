@@ -12,7 +12,7 @@ class TreeNode:
         deep: int,
         is_classification: bool,
         max_depth: int = 20,
-        min_rows_to_split: int = 5,
+        min_rows_to_split: int = 3,
         random_features_on_split: bool = False,
     ) -> None:
         self.X = X
@@ -194,7 +194,7 @@ class TreeNode:
             if self.is_classification:
                 self.split_point["class_left"] = self.mode(self.y[mask_left])
             else:
-                self.split_point["class_rigth"] = np.mean(self.y[mask_left])
+                self.split_point["class_left"] = np.mean(self.y[mask_left])
 
 
 class DecisionTree(Model):
