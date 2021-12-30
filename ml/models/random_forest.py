@@ -21,6 +21,7 @@ class RandomForest(Model):
         batch_size: int,
         is_classification: bool,
         random_state: int = 12,
+        max_features=None,
     ) -> None:
         """
         Init paramters
@@ -31,7 +32,9 @@ class RandomForest(Model):
         self.batch_size = batch_size
         self.is_classification = is_classification
         self.random_state = random_state
+        self.max_features = max_features
         self.forest = []
+        self.features = []
 
     def mode(self, x: np.array) -> int:
         """
@@ -51,12 +54,16 @@ class RandomForest(Model):
             X_batch = X[batch_index]
             y_batch = y[batch_index]
             # Set max features number
-            max_features = max(1, int(np.sqrt(X.shape[1]))) + 1
-            random_fetures_selected = np.random.randint(1, max_features + 1)
+            if self.max_features is None:
+                # Auto
+                random_fetures_selected = int(np.sqrt(X.shape[1]))
+            else:
+                random_fetures_selected = self.max_features
             # Select random features
             features_index = np.random.choice(
-                X.shape[1], random_fetures_selected, replace=False
+                X_batch.shape[1], random_fetures_selected, replace=False
             )
+            features_index = np.sort(features_index)
             # Select a random depth
             # random_depth = np.random.randint(self.max_depth) + 1
             # random_depth = np.max([2, random_depth])
@@ -66,8 +73,10 @@ class RandomForest(Model):
                 "Training %s tree in the forest with random features=%s and max_depth=%s"
                 % (tree, features_index, random_depth)
             )
+            ## Add tree to the forest
             self.forest.append(DecisionTree(self.is_classification, random_depth))
             self.forest[-1].fit(X_batch[:, features_index], y_batch)
+            self.features.append(features_index)
 
     def predict(self, X: np.array) -> np.array:
         """
@@ -76,8 +85,8 @@ class RandomForest(Model):
         # Collect all predictions in the batch
         predictions = []
         if self.forest is not None:
-            for tree in self.forest:
-                predictions.append(tree.predict(X))
+            for i, tree in enumerate(self.forest):
+                predictions.append(tree.predict(X[:, self.features[i]]))
         predictions = np.asarray(predictions)
         # Select kind of prediction
         y_hats = []
@@ -88,7 +97,9 @@ class RandomForest(Model):
                 y_hats.append(np.mean(column))
         return np.asarray(y_hats)
 
-    def feature_importance(self, X: np.array, y: np.array) -> Tuple[np.array]:
+    def feature_importance(
+        self, X: np.array, y: np.array, permutation_rounds: int = 5
+    ) -> Tuple[np.array]:
         """
         Feature importance calculated on column (feature) permutation method
         """
@@ -111,7 +122,7 @@ class RandomForest(Model):
             # Feature permutation
             for feature in range(X.shape[1]):
                 # Preparation to permute feature
-                for k in range(5):
+                for _ in range(permutation_rounds):
                     X_perm = X.copy()
                     # select ramdon feature permutation
                     np.random.shuffle(X_perm[:, feature])
