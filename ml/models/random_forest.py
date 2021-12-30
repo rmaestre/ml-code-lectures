@@ -78,7 +78,7 @@ class RandomForest(Model):
             self.forest[-1].fit(X_batch[:, features_index], y_batch)
             self.features.append(features_index)
 
-    def predict(self, X: np.array) -> np.array:
+    def predict(self, X: np.array, predict_proba: bool = False) -> np.array:
         """
         Predict a batch of examples
         """
@@ -92,7 +92,12 @@ class RandomForest(Model):
         y_hats = []
         for column in predictions.T:
             if self.is_classification:
-                y_hats.append(self.mode(column))
+                if predict_proba:
+                    zero_count = np.count_nonzero(column == 1)
+                    one_count = np.count_nonzero(column == 0)
+                    y_hats.append(zero_count / (zero_count + one_count))
+                else:
+                    y_hats.append(self.mode(column))
             else:
                 y_hats.append(np.mean(column))
         return np.asarray(y_hats)
