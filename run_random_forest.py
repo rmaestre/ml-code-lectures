@@ -8,16 +8,17 @@ from ml.metrics.classification import ClassificationMetrics
 from ml.metrics.regression import RegressionMetrics
 
 
-is_classification = True
+is_classification = False
 dataset = Blobs()
 
 if is_classification:
     # Generate synthetic dataset
     X, y = dataset.generate(
-        n_samples=500, n_centers=2, n_features=4, random_state=1234, cluster_std=[4, 4]
+        n_samples=500, n_centers=2, n_features=3, random_state=1234, cluster_std=[4, 4]
     )
-    # Add noise to one variable
+    # Add variable noise
     X[:, 0] += np.random.normal(X[:, 0], 10)
+    X[:, 2] += np.sin(y)
 
     # Plot points
     color_map = {0: "red", 1: "blue"}
@@ -43,7 +44,6 @@ if is_classification:
     # Plot bars
     plt.bar(importances.keys(), importances.values())
     plt.show()
-    a = 1 + 1
 
 else:
     X, y = dataset.generate_line(
@@ -77,3 +77,4 @@ else:
     pprint.pprint(importances)
     # Plot bars
     plt.bar(importances.keys(), importances.values())
+    plt.show()
