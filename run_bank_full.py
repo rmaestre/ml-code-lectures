@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pprint
+
 from sklearn.utils import resample
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.ensemble import RandomForestClassifier
@@ -14,7 +16,7 @@ from ml.metrics.classification import ClassificationMetrics
 # Get data
 X_train, y_train, X_test, y_test = Bank().generate()
 
-# Oversampling
+# Undersampling
 X_undersampling, y_undersampling = resample(
     X_train[y_train == 1], y_train[y_train == 1], replace=True, n_samples=150
 )
@@ -56,6 +58,18 @@ print("Accuracy %f %%" % metrics.get_accuracy())
 print("Confusion Matrix %f")
 print(confusion_matrix(y_test, y_hats))
 print(classification_report(y_hats, y_test))
+
+
+# calculate feature importance
+print("Features importance")
+importances = rf.feature_importance(
+    X_undersampling, y_undersampling, permutation_rounds=30
+)
+pprint.pprint(importances)
+# Plot bars
+plt.bar(importances.keys(), importances.values())
+plt.title("Feature importance (the less the better)")
+plt.show()
 
 
 # Init classification random forest (sklearn)

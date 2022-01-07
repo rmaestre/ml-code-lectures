@@ -106,7 +106,7 @@ class RandomForest(Model):
         self, X: np.array, y: np.array, permutation_rounds: int = 5
     ) -> Tuple[np.array]:
         """
-        Feature importance calculated on column (feature) permutation method
+        Feature importance calculated on column (feature) permutation method.
         """
         if len(self.forest) == 0:
             print("Please, fit the model before")
@@ -136,11 +136,14 @@ class RandomForest(Model):
                     error_perm = None
                     if self.is_classification:
                         metric = ClassificationMetrics(y, y_hats_perm)
-                        error_perm = metric.get_accuracy()
+                        error_perm = metric.get_accuracy() / 100
                     else:
                         metric = RegressionMetrics(y, y_hats_perm)
                         error_perm = metric.get_mse()
                     errors_permuted_features[feature] += error_perm
                 errors_permuted_features[feature] /= permutation_rounds
-                errors_permuted_features[feature] -= error
+                if self.is_classification:
+                    errors_permuted_features[feature] -= error / 100
+                else:
+                    errors_permuted_features[feature] -= error
             return errors_permuted_features

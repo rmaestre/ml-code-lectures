@@ -21,7 +21,7 @@ rf = RandomForest(
     n_trees=10,
     max_depth=100,
     batch_size=250,
-    max_features=10,
+    # max_features=10,
     is_classification=True,
 )
 # Fit model
