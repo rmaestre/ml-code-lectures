@@ -249,4 +249,4 @@ class DecisionTree(Model):
                         break
                     else:
                         pointer = pointer.right
-        return y_hats
+        return np.asarray(y_hats)
